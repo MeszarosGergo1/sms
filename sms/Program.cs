@@ -7,16 +7,19 @@ using System.Threading.Tasks;
 
 namespace sms
 {
-    class betu
-    {
-        public List<string> betulista;
-        public betu(List<string> betulista)
-        {
-            this.betulista = betulista;
-        }
-    }
     internal class Program
     {
+        static string szamsor(List<string> betuk, string szo)
+        {
+            string szamsor = "";
+
+            for (int i = 0; i < szo.Length; i++)
+            {
+                szamsor += Convert.ToString(betuk.IndexOf(betuk.FirstOrDefault(b => b.Contains(szo[i].ToString())))+2);
+            }
+
+            return szamsor;
+        }
         static void Main(string[] args)
         {
             /*
@@ -33,35 +36,66 @@ namespace sms
             Console.WriteLine();
 
             List<string> szavak = File.ReadAllLines("../../szavak.txt").ToList();
-            List<betu> betuk = new List<betu>();
+            List<string> betuk = new List<string>();
             
-            betuk.Add(new betu(new List<string>() {"a", "b", "c"}));
-            betuk.Add(new betu(new List<string>() {"d", "e", "f"}));
-            betuk.Add(new betu(new List<string>() {"g", "h", "i"}));
-            betuk.Add(new betu(new List<string>() {"j", "k", "l"}));
-            betuk.Add(new betu(new List<string>() {"m", "n", "o"}));
-            betuk.Add(new betu(new List<string>() {"p", "q", "r", "s"}));
-            betuk.Add(new betu(new List<string>() {"t", "u", "v"}));
-            betuk.Add(new betu(new List<string>() {"w", "x", "y", "z"}));
+            betuk = new List<string> { "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz" };
 
             foreach (var item in betuk)
             {
-                foreach (var item1 in item.betulista)
+                foreach (var item1 in item)
                 {
                     Console.WriteLine(item1);
                 }
             }
             
-            Console.Write("Adjon meg egy betűt: ");
-            string betuinput = Console.ReadLine();
+            bool loop = false;
+            while (loop == false)
+            {
+                Console.Write("Adjon meg egy betűt: ");
+                string betuinput = Console.ReadLine();
+                var gomb = betuk.FirstOrDefault(b => b.Contains(betuinput));
+                if (gomb == null)
+                    Console.WriteLine("Érvénytelen betű.");
+                else
+                { 
+                    Console.WriteLine($"A betű nyomógombja: {betuk.IndexOf(gomb) + 2}");
+                    loop = true;
+                }
+            }
+            loop = false;
+            while (loop == false)
+            {
+                Console.Write("Adjon meg egy szavat: ");
+                string szoinput = Console.ReadLine();
 
-            var gomb = betuk.FirstOrDefault(b => b.betulista.Contains(betuinput));
-            if(gomb == null)
-                Console.WriteLine("Érvénytelen betű.");
-            else
-                Console.WriteLine($"A betű nyomógombja: {betuk.IndexOf(gomb) + 2}");
-            
+                string szamkomb = szamsor(betuk, szoinput);
+                if (szamkomb.Contains("1"))
+                    Console.WriteLine("A szó érvénytelen karaktereket tartalmaz");
+                else
+                {
+                    Console.WriteLine($"A '{szoinput}' szónak a gombkombinációja: {szamkomb}");
+                    loop = true;
+                }
+            }
 
+            string leghosszabbszo = szavak.OrderByDescending(szo => szo.Length).First();
+            Console.WriteLine($"A leghosszabb szó: {leghosszabbszo}.");
+
+            int rovidszo = 0;
+            foreach (var szo in szavak)
+            {
+                if(szo.Length <= 5)
+                    rovidszo++;
+            }
+            Console.WriteLine($"A rövid szavak száma: {rovidszo}");
+
+            StreamWriter kodok = new StreamWriter("../../kodok.txt");
+            foreach (var szo in szavak)
+            {
+                kodok.WriteLine(szamsor(betuk, szo));
+            }
+
+            kodok.Close();
 
             Console.WriteLine();
             Console.WriteLine("Nyomja meg az ENTER-t a kilépéshez");

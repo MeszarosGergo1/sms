@@ -39,14 +39,6 @@ namespace sms
             List<string> betuk = new List<string>();
             
             betuk = new List<string> { "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz" };
-
-            foreach (var item in betuk)
-            {
-                foreach (var item1 in item)
-                {
-                    Console.WriteLine(item1);
-                }
-            }
             
             bool loop = false;
             while (loop == false)
@@ -96,6 +88,20 @@ namespace sms
             }
 
             kodok.Close();
+
+            Console.Write("Adjon meg egy számsort: ");
+            string szamsorinput = Console.ReadLine();
+
+            for (int k = 0; k < szamsorinput.Length; k++)
+            {
+                List<string> talalt = new List<string>();
+                for (int j = 0; j < betuk[szamsorinput[k]-2].Length; j++)
+                {
+                    talalt[k] += betuk[szamsorinput[k]-2][j];
+                }
+            }
+
+
 
             Console.WriteLine();
             Console.WriteLine("Nyomja meg az ENTER-t a kilépéshez");

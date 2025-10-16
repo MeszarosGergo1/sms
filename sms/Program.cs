@@ -22,6 +22,7 @@ namespace sms
         }
         static void Main(string[] args)
         {
+            Console.OutputEncoding = Encoding.UTF8;
             /*
             SMS
             MG 2025.10.13.
@@ -47,10 +48,10 @@ namespace sms
                 string betuinput = Console.ReadLine();
                 var gomb = betuk.FirstOrDefault(b => b.Contains(betuinput));
                 if (gomb == null)
-                    Console.WriteLine("Érvénytelen betű.");
+                    Console.WriteLine("\tÉrvénytelen betű.");
                 else
                 { 
-                    Console.WriteLine($"A betű nyomógombja: {betuk.IndexOf(gomb) + 2}");
+                    Console.WriteLine($"\tA betű nyomógombja: {betuk.IndexOf(gomb) + 2}");
                     loop = true;
                 }
             }
@@ -62,17 +63,17 @@ namespace sms
 
                 string szamkomb = szamsor(betuk, szoinput);
                 if (szamkomb.Contains("1"))
-                    Console.WriteLine("A szó érvénytelen karaktereket tartalmaz");
+                    Console.WriteLine("\tA szó érvénytelen karaktereket tartalmaz");
                 else
                 {
-                    Console.WriteLine($"A '{szoinput}' szónak a gombkombinációja: {szamkomb}");
+                    Console.WriteLine($"\tA '{szoinput}' szónak a gombkombinációja: {szamkomb}");
                     loop = true;
                 }
             }
-
+            Console.WriteLine();
             string leghosszabbszo = szavak.OrderByDescending(szo => szo.Length).First();
             Console.WriteLine($"A leghosszabb szó: {leghosszabbszo}.");
-
+            Console.WriteLine();
             int rovidszo = 0;
             foreach (var szo in szavak)
             {
@@ -86,21 +87,77 @@ namespace sms
             {
                 kodok.WriteLine(szamsor(betuk, szo));
             }
-
+            
             kodok.Close();
-
+            Console.WriteLine();
             Console.Write("Adjon meg egy számsort: ");
             string szamsorinput = Console.ReadLine();
 
-            for (int k = 0; k < szamsorinput.Length; k++)
+            List<string> talalt = new List<string>();
+            for (int i = 0; i < szavak.Count; i++)
             {
-                List<string> talalt = new List<string>();
-                for (int j = 0; j < betuk[szamsorinput[k]-2].Length; j++)
+                if (szamsor(betuk, szavak[i]) == szamsorinput)
                 {
-                    talalt[k] += betuk[szamsorinput[k]-2][j];
+                    talalt.Add(szavak[i]);
+                }
+            }
+            if (talalt.Count == 0)
+            {
+                Console.WriteLine("\tNincs ilyen számsorhoz tartozó szó.");
+            }
+            else
+            {
+                Console.WriteLine("\tA megadott számsorhoz tartozó szavak:");
+                foreach (var item in talalt)
+                {
+                    Console.WriteLine("\t\t"+item);
+                }
+            }
+            Console.WriteLine();
+      
+            Dictionary<string, List<string>> kodokdik = new Dictionary<string, List<string>>();
+            for (int i = 0; i < szavak.Count; i++)
+            {
+                string kod = szamsor(betuk, szavak[i]);
+                if (!kodokdik.ContainsKey(kod))
+                {
+                    kodokdik.Add(kod, new List<string>());
+                }
+                kodokdik[kod].Add(szavak[i]);
+            }
+            Console.WriteLine("8. feladat: ");
+            foreach (var pair in kodokdik)
+            {
+                if (pair.Value.Count > 1)
+                {
+                    for (int j = 0; j < pair.Value.Count; j++)
+                    {
+                        Console.Write(pair.Value[j] + " : " + pair.Key + "; ");
+                    }
+                }
+            }
+            Console.WriteLine();
+
+            Console.WriteLine();
+            Console.WriteLine("9. feladat: ");
+
+            string leghosszabbkod = "";
+            int leghosszabbdb = 0;
+
+            foreach (var pair in kodokdik)
+            {
+                if (pair.Value.Count > leghosszabbdb)
+                {
+                    leghosszabbdb = pair.Value.Count;
+                    leghosszabbkod = pair.Key;
                 }
             }
 
+            Console.WriteLine($"A legtöbb szó a '{leghosszabbkod}' kódhoz tartozik ({leghosszabbdb} db):");
+            foreach (var szo in kodokdik[leghosszabbkod])
+            {
+                Console.WriteLine("\t" + szo);
+            }
 
 
             Console.WriteLine();
